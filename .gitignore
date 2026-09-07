@@ -1,5 +1,14 @@
-# 대용량 미디어 (GitHub 대신 별도 호스팅 권장)
-*.mp4
+# 저장소에는 완성된 단일 파일(index.html)과 영상만 올립니다.
+# 아래는 index.html 을 만들어내는 로컬 원본/도구입니다.
+source/
+build.py
+styles.css
+script.js
+
+# 인쇄용 원본 판넬(31MB). 웹용으로 압축해 index.html 안에 들어가 있습니다.
 *.jpg
 *.jpeg
 *.png
+
+# 기타
+자기소개.txt
