@@ -904,7 +904,7 @@ dl, dd { margin: 0; }
       <div class="project-card" data-category="video">
         <div class="project-thumb tint-blue">
           <div class="thumb-frame">
-            <video src="./summerschool.mp4" muted preload="metadata"></video>
+            <video src="./summerschool.mp4" muted playsinline preload="metadata"></video>
           </div>
           <div class="thumb-overlay">
             <button class="btn-overlay btn-play-trigger" id="openVideoModal">영상 재생하기</button>
@@ -1101,7 +1101,11 @@ dl, dd { margin: 0; }
       <button class="btn-icon btn-close" id="closeVideoModal" title="닫기"><i data-lucide="x"></i></button>
     </div>
     <div class="modal-body modal-body-video">
-      <video controls autoplay id="modalVideoPlayer">
+      <!-- autoplay 없음: 페이지를 열자마자 영상이 재생되지 않도록 한다.
+           재생은 사용자가 버튼을 눌렀을 때 script.js 가 시작한다.
+           playsinline 은 iOS 에서 전체화면으로 튀는 것을 막는다.
+           preload="none" 이라 모달을 열기 전까지는 영상을 내려받지 않는다. -->
+      <video controls playsinline preload="none" id="modalVideoPlayer">
         <source src="./summerschool.mp4" type="video/mp4">
         브라우저가 비디오 태그를 지원하지 않습니다.
       </video>
@@ -1258,8 +1262,17 @@ document.addEventListener('DOMContentLoaded', () => {
     videoModal.classList.add('active');
     document.body.style.overflow = 'hidden';
     if (modalVideoPlayer) {
-      modalVideoPlayer.currentTime = 0;
-      modalVideoPlayer.play();
+      // preload="none" 이라 아직 메타데이터가 없을 수 있다.
+      // 이때 currentTime 을 건드리면 브라우저에 따라 오류가 난다.
+      if (modalVideoPlayer.readyState > 0) {
+        modalVideoPlayer.currentTime = 0;
+      }
+      // 모바일에서 재생이 거부될 수 있으므로 실패해도 조용히 넘어간다.
+      // 재생 버튼은 controls 로 계속 노출된다.
+      const played = modalVideoPlayer.play();
+      if (played && typeof played.catch === 'function') {
+        played.catch(() => {});
+      }
     }
   }
 
