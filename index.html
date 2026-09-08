@@ -229,6 +229,14 @@ dl, dd { margin: 0; }
 }
 .nav-link:hover { background: var(--tile); color: var(--ink); }
 
+/* 클릭으로 선택된 메뉴 — 연두색으로 표시 */
+.nav-link.is-selected {
+  background: var(--lime);
+  color: var(--ink);
+  font-weight: 600;
+}
+.nav-link.is-selected:hover { background: var(--lime-hover); }
+
 .nav-cta { margin-left: 6px; }
 .mobile-toggle { display: none; padding: 8px; }
 
@@ -1125,6 +1133,26 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', () => {
         navMenu.classList.remove('active');
       });
+    });
+  }
+
+  // 1-1. Nav Link Selection
+  // 처음에는 아무것도 선택되지 않은 상태(흰색)이고,
+  // 메뉴를 클릭하면 그 항목만 연두색으로 표시된다.
+  const navLinks = document.querySelectorAll('.nav-link');
+  const navLogo = document.querySelector('.nav-logo');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.forEach(other => other.classList.remove('is-selected'));
+      link.classList.add('is-selected');
+    });
+  });
+
+  // 로고를 눌러 맨 위로 돌아오면 선택 상태를 해제한다.
+  if (navLogo) {
+    navLogo.addEventListener('click', () => {
+      navLinks.forEach(link => link.classList.remove('is-selected'));
     });
   }
 
