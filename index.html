@@ -124,13 +124,58 @@ dl, dd { margin: 0; }
 .btn-outline:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
 
 .btn-overlay {
-  background: #fff;
+  background: var(--lime);
   color: var(--ink);
   padding: 11px 22px;
   font-size: 14px;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
 }
-.btn-overlay:hover { transform: translateY(-2px); }
+.btn-overlay:hover { background: var(--lime-hover); transform: translateY(-2px); }
+
+.btn-lg { padding: 15px 30px; font-size: 16px; }
+
+/* 라임 액센트 소품 --------------------------------------------------------- */
+
+/* 히어로 상단 배지 */
+.hero-badge {
+  display: inline-block;
+  background: var(--lime);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+/* 제목 일부에 형광펜처럼 깔리는 라임 */
+.hl {
+  background: linear-gradient(180deg, transparent 58%, var(--lime) 58%, var(--lime) 96%, transparent 96%);
+  padding: 0 0.08em;
+}
+
+/* 섹션 라벨 — 앞에 라임 점 */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 4px rgba(201, 242, 74, 0.28);
+}
 
 /* --------------------------------------------------------------------------
    Navigation — 떠 있는 알약형 내비
@@ -190,9 +235,26 @@ dl, dd { margin: 0; }
 /* --------------------------------------------------------------------------
    Hero
    -------------------------------------------------------------------------- */
-.hero { padding-top: clamp(32px, 6vw, 72px); scroll-margin-top: 90px; }
+.hero {
+  position: relative;
+  padding-top: clamp(32px, 6vw, 72px);
+  scroll-margin-top: 90px;
+}
 
-.hero-copy { text-align: center; max-width: 760px; margin: 0 auto; }
+/* 히어로 뒤에 깔리는 라임 글로우 */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -140px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 120%);
+  height: 520px;
+  background: radial-gradient(ellipse at center, rgba(201, 242, 74, 0.42) 0%, rgba(201, 242, 74, 0) 68%);
+  pointer-events: none;
+}
+
+.hero-copy { position: relative; text-align: center; max-width: 760px; margin: 0 auto; }
 
 .hero-title {
   font-size: clamp(32px, 5.2vw, 58px);
@@ -217,6 +279,8 @@ dl, dd { margin: 0; }
 }
 
 .hero-image {
+  position: relative;
+  z-index: 1;
   margin-top: clamp(36px, 5vw, 64px);
   border-radius: var(--r-band);
   overflow: hidden;
@@ -320,8 +384,9 @@ dl, dd { margin: 0; }
 .filter-btn:hover { color: var(--ink); }
 
 .filter-btn.active {
-  background: #fff;
+  background: var(--lime);
   color: var(--ink);
+  font-weight: 600;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
 }
 
@@ -356,8 +421,8 @@ dl, dd { margin: 0; }
   overflow: hidden;
 }
 
-.tint-green { background: linear-gradient(160deg, #e9f7e1 0%, #f7fbf3 100%); }
-.tint-blue { background: linear-gradient(160deg, #e7edfc 0%, #f5f7fe 100%); }
+.tint-green { background: linear-gradient(160deg, #d8f38f 0%, #f3fce0 100%); }
+.tint-blue { background: linear-gradient(160deg, #e7edfc 0%, #f2fbde 100%); }
 
 .thumb-frame {
   height: 100%;
@@ -445,13 +510,14 @@ dl, dd { margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  background: var(--tile);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--lime);
+  color: var(--ink);
   margin-bottom: 16px;
 }
-.card-icon svg { width: 18px; height: 18px; }
+.card-icon svg { width: 19px; height: 19px; }
 
 .card-category {
   display: block;
@@ -513,15 +579,16 @@ dl, dd { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: 999px;
-  padding: 8px 15px;
+  padding: 9px 17px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-2);
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  font-weight: 600;
+  background: var(--lime);
+  color: var(--ink);
+  transition: background 0.2s ease, color 0.2s ease;
 }
-.btn-copy:hover { border-color: var(--ink); background: var(--ink); color: #fff; }
+.btn-copy:hover { background: var(--lime-hover); }
 .btn-copy svg { width: 15px; height: 15px; }
 
 /* --------------------------------------------------------------------------
@@ -538,7 +605,7 @@ dl, dd { margin: 0; }
 .cta-box {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(201, 242, 74, 0.4);
+  border: 1.5px solid var(--lime);
   border-radius: 16px;
   padding: clamp(28px, 4vw, 56px);
   min-height: clamp(200px, 24vw, 300px);
@@ -609,11 +676,10 @@ dl, dd { margin: 0; }
   letter-spacing: -0.045em;
   line-height: 0.86;
   white-space: nowrap;
-  background: linear-gradient(92deg, #ffffff 30%, var(--lime) 100%);
+  background: linear-gradient(92deg, #ffffff 6%, var(--lime) 52%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  opacity: 0.92;
   overflow: hidden;
 }
 
@@ -781,7 +847,8 @@ dl, dd { margin: 0; }
   <!-- Hero -->
   <section id="hero" class="hero">
     <div class="hero-copy">
-      <h1 class="hero-title">도시와 숲을 잇는<br>공간을 설계합니다</h1>
+      <span class="hero-badge">그린스마트시티 포트폴리오</span>
+      <h1 class="hero-title"><span class="hl">도시와 숲</span>을 잇는<br>공간을 설계합니다</h1>
       <p class="hero-sub">
         상명대학교 그린스마트시티학과 최한솔의 포트폴리오입니다.<br>
         설계 판넬과 미디어 작업물을 확인해 보세요.
@@ -810,7 +877,10 @@ dl, dd { margin: 0; }
   <!-- Works -->
   <section id="projects" class="section">
     <div class="section-head">
-      <h2 class="section-title">설계 판넬과 미디어,<br>지금까지의 작업물</h2>
+      <div>
+        <span class="eyebrow">작업물</span>
+        <h2 class="section-title">설계 판넬과 미디어,<br>지금까지의 작업물</h2>
+      </div>
       <!-- Filter Tabs -->
       <div class="filter-tabs">
         <button class="filter-btn active" data-filter="all">전체</button>
@@ -870,6 +940,7 @@ dl, dd { margin: 0; }
   <!-- About & Certifications -->
   <section id="about" class="section section-gray">
     <div class="section-head section-head-center">
+      <span class="eyebrow">소개 &amp; 자격</span>
       <h2 class="section-title">학술 활동과 공모전,<br>그리고 보유 자격</h2>
       <p class="section-desc">그동안의 활동 이력과 자격증 현황입니다.</p>
     </div>
@@ -908,7 +979,10 @@ dl, dd { margin: 0; }
   <!-- Contact -->
   <section id="contact" class="section">
     <div class="section-head">
-      <h2 class="section-title">인적사항 및 연락처</h2>
+      <div>
+        <span class="eyebrow">연락처</span>
+        <h2 class="section-title">인적사항 및 연락처</h2>
+      </div>
     </div>
 
     <div class="contact-card">
@@ -941,7 +1015,7 @@ dl, dd { margin: 0; }
     <div class="cta-box">
       <div class="cta-copy">
         <h2 class="cta-title">함께 이야기 나눌<br>준비가 되어 있습니다</h2>
-        <a href="#contact" class="btn-white">연락처 보기</a>
+        <a href="#contact" class="btn-accent btn-lg">연락처 보기</a>
       </div>
       <div class="cta-graphic" aria-hidden="true">
         <svg viewBox="0 0 240 140" preserveAspectRatio="none">
