@@ -16,6 +16,11 @@
 
 * { box-sizing: border-box; }
 
+/* hidden 이 붙은 것은 무조건 숨깁니다.
+   .login-screen 처럼 display 를 정해 둔 규칙이 있으면
+   그 규칙이 hidden 을 이겨서 화면에 그대로 남기 때문입니다. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
