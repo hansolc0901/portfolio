@@ -108,6 +108,11 @@
   - 관리자 응답에는 `Cache-Control: no-store`를 붙인다
 - 관리자 페이지의 '배포용 파일 다시 만들기' 버튼이 `python build.py`를 실행한다 (사용자 결정)
 - 배포용 `index.html`에는 초안을 넣지 않는다
+- 배포는 GitHub(hansolc0901/portfolio) → Vercel 자동 연결이다. `main`에 push하면 반영된다
+  - 주소: https://portfolio-hazel-one-63.vercel.app/
+  - 인터넷에는 `index.html`과 `summerschool.mp4`만 올린다 (`.vercelignore`)
+  - 관리자 페이지와 백엔드는 배포하지 않는다. 서버가 없어 동작하지 않고, 방문자에게 보일 이유도 없다
+  - 내용을 바꾼 뒤에는 `python build.py`를 먼저 실행해야 사이트에 반영된다
 - 헤더 오른쪽 '공유하기' 버튼: 링크 공유(휴대폰은 기기 공유창, PC는 주소 복사) / PDF 공유
 - PDF 공유는 라이브러리 없이 A4 전용 문서를 구성해 브라우저 저장창('PDF로 저장')으로 저장한다 (글자 선택·검색 가능)
 - PDF 내용은 페이지 문구를 그대로 읽어 만든다. 인적사항은 페이지와 동일하게 모두 포함한다 (사용자 결정)

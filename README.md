@@ -170,6 +170,36 @@ python build.py
 1. `frontend/assets/` — 판넬 원본(31MB)을 웹용 크기로 줄인 사진
 2. `index.html` — HTML·CSS·JS·데이터·사진을 전부 합친 파일 하나
 
+## 인터넷에 올리기 (Vercel)
+
+주소: <https://portfolio-hazel-one-63.vercel.app/>
+
+GitHub 저장소가 Vercel 에 연결되어 있어서, `main` 에 올리면 자동으로 다시 배포됩니다.
+
+```bash
+python build.py                 # 1. 배포용 index.html 다시 만들기
+git add -A && git commit -m "..."   # 2. 저장
+git push                        # 3. 올리기 → 1~2분 뒤 사이트 반영
+```
+
+관리자 페이지에서 고쳤다면 **'배포용 파일 다시 만들기' 버튼을 먼저 누른 뒤** 올려야
+바뀐 내용이 사이트에 나옵니다.
+
+### 배포되는 것과 안 되는 것
+
+`.vercelignore` 에 적힌 대로, 인터넷에는 **`index.html` 과 `summerschool.mp4` 두 개만** 올라갑니다.
+화면·글씨·사진이 모두 `index.html` 안에 들어 있어 다른 파일이 필요 없습니다.
+
+| | 인터넷 | GitHub |
+|---|---|---|
+| `index.html`, `summerschool.mp4` | 올라감 | 올라감 |
+| `backend/`, `frontend/`, `data/`, `build.py` | **안 올라감** | 올라감 |
+
+관리자 페이지는 서버가 있어야 동작하므로 인터넷에는 올리지 않습니다.
+주소를 직접 쳐도 404 가 납니다. 내 컴퓨터에서 서버를 켰을 때만 쓸 수 있습니다.
+
+초안도 `index.html` 에 들어가지 않으므로 방문자에게 보이지 않습니다.
+
 ## API 목록
 
 응답은 항상 `{ "data": ... }` 모양입니다. 오류는 `{ "error": { "status", "message" } }` 입니다.
