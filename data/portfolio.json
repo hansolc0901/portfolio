@@ -10,13 +10,20 @@
     "phone": "010-4466-3495",
     "copyrightYear": 2026
   },
-
   "filters": [
-    { "value": "all", "label": "전체" },
-    { "value": "panel", "label": "설계 판넬" },
-    { "value": "video", "label": "미디어 영상" }
+    {
+      "value": "all",
+      "label": "전체"
+    },
+    {
+      "value": "panel",
+      "label": "설계 판넬"
+    },
+    {
+      "value": "video",
+      "label": "미디어 영상"
+    }
   ],
-
   "projects": [
     {
       "id": "urban-forest-panel",
@@ -60,9 +67,22 @@
         "src": "summerschool.mp4",
         "mimeType": "video/mp4"
       }
+    },
+    {
+      "id": "project-mucag7ci-zbplih",
+      "status": "draft",
+      "title": "도시숲 설계공모전 출품작 ‘품앗이’",
+      "role": "렌더링 이미지 및 판넬 삽도 디자인",
+      "description": "",
+      "date": "2026.06~2026.07",
+      "teamSize": 4,
+      "notes": "",
+      "category": "",
+      "tag": "",
+      "createdAt": "2026-09-22T06:23:46.482Z",
+      "updatedAt": "2026-09-22T06:23:46.482Z"
     }
   ],
-
   "credentials": [
     {
       "id": "spring-conference",
