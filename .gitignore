@@ -14,5 +14,8 @@ source/
 *.jpeg
 *.png
 
+# 용량이 큰 PDF. 같은 내용의 md 파일을 대신 보관합니다.
+*.pdf
+
 # 기타
 자기소개.txt
