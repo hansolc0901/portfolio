@@ -1,0 +1,314 @@
+/* 관리자 화면 전용 스타일입니다. 공개 페이지의 styles.css 와 섞이지 않습니다. */
+
+:root {
+  --bg: #0b0e12;
+  --panel: #141920;
+  --panel-2: #1b222b;
+  --line: #2a323d;
+  --text: #e8ecf1;
+  --muted: #8a97a6;
+  /* 빈칸의 예시 문구 색. 입력한 글자보다 확실히 옅게 보이도록 한다. */
+  --placeholder: #5b6775;
+  --mint: #7fe3a1;
+  --amber: #f5b21c;
+  --red: #ff7b72;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', -apple-system, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+h1, h2 { margin: 0; font-weight: 600; }
+h1 { font-size: 20px; }
+h2 { font-size: 15px; letter-spacing: 0.02em; }
+
+/* ── 공통 버튼 ─────────────────────────────────────────── */
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover { background: #232c37; border-color: #3a4451; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn.primary { background: var(--mint); border-color: var(--mint); color: #08120c; font-weight: 600; }
+.btn.primary:hover { background: #95eab1; border-color: #95eab1; }
+.btn.small { padding: 7px 12px; font-size: 13px; }
+
+/* ── 1. 로그인 화면 ────────────────────────────────────── */
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 32px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.login-desc { margin: 8px 0 24px; color: var(--muted); font-size: 14px; }
+.login-card .btn { width: 100%; margin-top: 8px; }
+
+/* ── 입력 칸 ───────────────────────────────────────────── */
+.field { display: block; margin-bottom: 18px; }
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.required-chip {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(245, 178, 28, 0.14);
+  color: var(--amber);
+  font-size: 11px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--mint);
+}
+
+/* 빈칸일 때만 보이는 예시 문구. 입력하면 브라우저가 자동으로 지운다. */
+::placeholder { color: var(--placeholder); opacity: 1; }
+
+.field.has-error input,
+.field.has-error textarea { border-color: var(--red); }
+.field-error { margin: 6px 0 0; color: var(--red); font-size: 13px; }
+
+/* ── 2. 관리 화면 ──────────────────────────────────────── */
+.admin-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.header-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.admin-body {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  padding: 24px;
+  align-items: start;
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.list-pane, .form-pane {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+/* ── 목록 ──────────────────────────────────────────────── */
+.project-list { list-style: none; margin: 0; padding: 0; }
+.project-list li { margin-bottom: 8px; }
+
+.project-item {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.project-item:hover { border-color: #3a4451; }
+.project-item.is-selected { border-color: var(--mint); background: #1d2a23; }
+
+.item-title { display: block; font-size: 14px; }
+.item-title.is-empty { color: var(--muted); font-style: italic; }
+.item-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+
+.badge {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.badge.published { background: rgba(127, 227, 161, 0.16); color: var(--mint); }
+.badge.draft { background: rgba(138, 151, 166, 0.16); color: var(--muted); }
+.badge.missing { background: rgba(255, 123, 114, 0.14); color: var(--red); }
+
+.list-empty { color: var(--muted); font-size: 14px; }
+
+/* ── 초안 / 공개 선택 ──────────────────────────────────── */
+.status-box {
+  margin: 0 0 22px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.status-box legend { padding: 0 6px; font-size: 13px; color: var(--muted); }
+
+/* 두 선택지를 나란히 놓고, 설명을 항상 같이 보여 준다. */
+.status-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.status-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 11px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel-2);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.status-option:hover { border-color: #3a4451; }
+
+/* 라디오 자체는 감추고 동그라미를 직접 그린다. 키보드 조작은 그대로 된다. */
+.status-option input {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+}
+.status-option:focus-within { outline: 2px solid var(--mint); outline-offset: 2px; }
+
+.status-mark {
+  width: 18px; height: 18px;
+  margin-top: 2px;
+  border: 2px solid #4a5563;
+  border-radius: 50%;
+}
+
+.status-option.is-selected { border-color: var(--mint); background: #1d2a23; }
+.status-option.is-selected .status-mark {
+  border-color: var(--mint);
+  background: radial-gradient(circle, var(--mint) 0 45%, transparent 47%);
+}
+
+.status-name { display: block; font-size: 14px; font-weight: 600; }
+.status-desc {
+  display: block;
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* ── 저장하지 않은 내용 되살리기 ───────────────────────── */
+.restore-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  background: rgba(245, 178, 28, 0.1);
+}
+.restore-text { margin: 0; font-size: 14px; color: var(--amber); }
+.restore-actions { display: flex; gap: 8px; }
+
+/* ── 중복 안내 ─────────────────────────────────────────── */
+.duplicate-bar {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  background: rgba(245, 178, 28, 0.1);
+}
+.duplicate-head { margin: 0; font-size: 14px; font-weight: 600; color: var(--amber); }
+.duplicate-target {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.duplicate-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.duplicate-note { margin: 12px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--muted); }
+
+.badge.duplicate { background: rgba(245, 178, 28, 0.16); color: var(--amber); }
+
+.form-hint { color: var(--muted); font-size: 13px; }
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.autosave-status { font-size: 13px; color: var(--muted); }
+.autosave-status.is-dirty { color: var(--amber); }
+
+/* ── 알림 문구 ─────────────────────────────────────────── */
+.message {
+  margin: 0 0 18px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+.message.error { background: rgba(255, 123, 114, 0.12); color: var(--red); }
+.message.success { background: rgba(127, 227, 161, 0.12); color: var(--mint); }
+.message.info { background: rgba(138, 151, 166, 0.12); color: var(--muted); }
+
+.admin > .message { margin: 18px 24px 0; }
+
+/* ── 좁은 화면 ─────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .admin-body { grid-template-columns: 1fr; }
+  .admin-header { flex-direction: column; align-items: stretch; }
+  .header-actions .btn { flex: 1; text-align: center; }
+}
+
+@media (max-width: 560px) {
+  .status-options { grid-template-columns: 1fr; }
+  .restore-actions { width: 100%; }
+  .restore-actions .btn { flex: 1; }
+}

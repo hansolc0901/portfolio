@@ -1,0 +1,100 @@
+{
+  "profile": {
+    "name": "최한솔",
+    "nameEn": "Choi Hansol",
+    "gender": "여성",
+    "birthDate": "2005.09.01",
+    "university": "상명대학교",
+    "department": "그린스마트시티학과",
+    "studentId": "202420780",
+    "phone": "010-4466-3495",
+    "copyrightYear": 2026
+  },
+
+  "filters": [
+    { "value": "all", "label": "전체" },
+    { "value": "panel", "label": "설계 판넬" },
+    { "value": "video", "label": "미디어 영상" }
+  ],
+
+  "projects": [
+    {
+      "id": "urban-forest-panel",
+      "status": "published",
+      "category": "panel",
+      "title": "도시숲 품앗이 최종 판넬",
+      "tag": "Design Panel",
+      "description": "도시숲 설계공모대전에 출품한 최종 판넬입니다. 확대 뷰어에서 원본에 가까운 해상도로 살펴볼 수 있습니다.",
+      "role": "",
+      "date": "",
+      "teamSize": null,
+      "notes": "",
+      "overlayLabel": "고해상도 판넬 보기",
+      "actionLabel": "판넬 뷰어 열기",
+      "actionIcon": "arrow-right",
+      "viewerTitle": "도시숲 품앗이 최종 판넬 뷰어",
+      "media": {
+        "type": "image",
+        "thumbSrc": "assets/panel-card.jpg",
+        "fullSrc": "assets/panel-full.jpg",
+        "alt": "도시숲 품앗이 최종 판넬"
+      }
+    },
+    {
+      "id": "summer-school-video",
+      "status": "published",
+      "category": "video",
+      "title": "Summer School 영상",
+      "tag": "HD Video",
+      "description": "Summer School 프로그램 활동을 기록한 미디어 영상입니다. 전체 화면 플레이어에서 재생됩니다.",
+      "role": "",
+      "date": "",
+      "teamSize": null,
+      "notes": "",
+      "overlayLabel": "영상 재생하기",
+      "actionLabel": "영상 재생하기",
+      "actionIcon": "play",
+      "viewerTitle": "Summer School 영상",
+      "media": {
+        "type": "video",
+        "src": "summerschool.mp4",
+        "mimeType": "video/mp4"
+      }
+    }
+  ],
+
+  "credentials": [
+    {
+      "id": "spring-conference",
+      "category": "학술 활동",
+      "title": "춘계학술대회 참가",
+      "shortLabel": "춘계학술대회",
+      "description": "그린스마트시티 및 조경 분야 춘계학술대회 참가 및 연구 탐구.",
+      "icon": "presentation"
+    },
+    {
+      "id": "urban-forest-competition",
+      "category": "공모전 참가",
+      "title": "도시숲 설계공모대전",
+      "shortLabel": "도시숲 설계공모대전",
+      "description": "도시숲 설계공모대전 참가 및 도시숲 품앗이 판넬 출품.",
+      "icon": "trees"
+    },
+    {
+      "id": "computer-literacy-2",
+      "category": "자격사항",
+      "title": "컴퓨터활용능력 2급",
+      "shortLabel": "컴퓨터활용능력 2급",
+      "description": "컴퓨터활용능력 2급 자격 취득.",
+      "icon": "monitor"
+    },
+    {
+      "id": "gtq-2",
+      "category": "자격사항",
+      "title": "GTQ 2급 취득",
+      "shortLabel": "GTQ 2급",
+      "description": "GTQ(그래픽기술자격) 2급 자격 취득.",
+      "icon": "palette"
+    }
+  ]
+}

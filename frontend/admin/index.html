@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 | 최한솔 포트폴리오</title>
+  <!-- 검색엔진에 올라가지 않도록 막는다 -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- 1. 로그인 화면 -->
+<section class="login-screen" id="loginScreen">
+  <!-- autocomplete="off": 브라우저가 비밀번호를 기억해 두지 않도록 합니다. -->
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <h1>관리자 로그인</h1>
+    <p class="login-desc">들어올 때마다 비밀번호를 입력합니다.</p>
+
+    <label class="field">
+      <span class="field-label">비밀번호</span>
+      <input type="password" id="passwordInput" autocomplete="off"
+             placeholder="비밀번호를 입력하세요">
+    </label>
+
+    <p class="message error" id="loginMessage" hidden></p>
+
+    <button type="submit" class="btn primary" id="loginButton">로그인</button>
+  </form>
+</section>
+
+<!-- 2. 관리 화면 -->
+<div class="admin" id="adminScreen" hidden>
+
+  <header class="admin-header">
+    <h1>작업물 관리</h1>
+    <div class="header-actions">
+      <a class="btn ghost" href="/" target="_blank" rel="noopener">사이트 보기</a>
+      <button type="button" class="btn ghost" id="buildButton">배포용 파일 다시 만들기</button>
+      <button type="button" class="btn ghost" id="logoutButton">로그아웃</button>
+    </div>
+  </header>
+
+  <p class="message" id="globalMessage" hidden></p>
+
+  <div class="admin-body">
+
+    <!-- 왼쪽: 목록 -->
+    <aside class="list-pane">
+      <div class="pane-head">
+        <h2>작업물 목록</h2>
+        <button type="button" class="btn primary small" id="newButton">새로 만들기</button>
+      </div>
+      <ul class="project-list" id="projectList"></ul>
+    </aside>
+
+    <!-- 오른쪽: 입력 폼 -->
+    <main class="form-pane">
+      <!-- 저장하지 않고 창을 닫았을 때 되살릴지 물어보는 줄 -->
+      <div class="restore-bar" id="restoreBar" hidden>
+        <p class="restore-text" id="restoreText"></p>
+        <div class="restore-actions">
+          <button type="button" class="btn primary small" id="restoreApply">불러오기</button>
+          <button type="button" class="btn ghost small" id="restoreDiscard">버리기</button>
+        </div>
+      </div>
+
+      <!-- 같은 제목이 이미 있을 때 어떻게 할지 물어보는 줄 -->
+      <div class="duplicate-bar" id="duplicateBar" hidden>
+        <p class="duplicate-head">같은 제목의 작업물이 이미 있습니다.</p>
+        <p class="duplicate-target" id="duplicateTarget"></p>
+        <div class="duplicate-actions">
+          <button type="button" class="btn primary small" id="duplicateMerge">기존 것에 합치기</button>
+          <button type="button" class="btn ghost small" id="duplicateSeparate">따로 저장</button>
+          <button type="button" class="btn ghost small" id="duplicateCancel">취소</button>
+        </div>
+        <p class="duplicate-note" id="duplicateNote"></p>
+      </div>
+
+      <form id="projectForm">
+        <div class="pane-head">
+          <h2 id="formTitle">새 작업물</h2>
+          <span class="form-hint" id="formHint"></span>
+        </div>
+
+        <!-- 초안 / 공개 — 두 선택지의 설명이 항상 같이 보인다 -->
+        <fieldset class="status-box">
+          <legend>이 작업물을 방문자에게 보여줄까요?</legend>
+          <div class="status-options" id="statusOptions"></div>
+        </fieldset>
+
+        <!-- 입력 칸들은 서버가 알려준 정의대로 만들어진다 -->
+        <div class="fields" id="fieldList"></div>
+
+        <p class="message" id="formMessage" hidden></p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary" id="saveButton">임시저장</button>
+          <button type="button" class="btn ghost" id="cancelButton">되돌리기</button>
+          <span class="autosave-status" id="autosaveStatus"></span>
+        </div>
+      </form>
+    </main>
+
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>최한솔 | 그린스마트시티 포트폴리오 (Choi Hansol Portfolio)</title>
+  <meta name="description" content="상명대학교 그린스마트시티학과 최한솔의 개인 포트폴리오 웹사이트입니다.">
+
+  <!-- JS가 켜진 경우에만 스크롤 등장 효과를 쓴다 (꺼져 있으면 내용이 그대로 보임) -->
+  <script>document.documentElement.classList.add('js');</script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 배경: 천천히 움직이는 그라디언트 빛 + 필름 노이즈 -->
+<div class="bg" aria-hidden="true">
+  <div class="bg-layer bg-night">
+    <span class="blob n1"></span>
+    <span class="blob n2"></span>
+    <span class="blob n3"></span>
+  </div>
+  <div class="bg-layer bg-vivid">
+    <span class="blob v1"></span>
+    <span class="blob v2"></span>
+    <span class="blob v3"></span>
+    <span class="blob v4"></span>
+  </div>
+  <div class="grain"></div>
+</div>
+
+<!-- 히어로에서 커서를 따라다니는 유리 렌즈 -->
+<div class="lens" id="lens" aria-hidden="true"></div>
+
+<!-- Navigation -->
+<header class="site-header" id="siteHeader">
+  <nav class="navbar container">
+    <a href="#hero" class="nav-logo" aria-label="맨 위로">CHOI HANSOL</a>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="#projects" class="nav-link">작업물</a></li>
+      <li><a href="#about" class="nav-link">소개 &amp; 자격</a></li>
+      <li><a href="#contact" class="nav-link">연락하기</a></li>
+    </ul>
+    <div class="share">
+      <button class="share-toggle" id="shareToggle" aria-label="공유하기" aria-expanded="false" aria-controls="shareMenu">
+        <i data-lucide="share-2"></i><span>공유하기</span>
+      </button>
+      <div class="share-menu" id="shareMenu">
+        <button class="share-item" id="shareLink">
+          <i data-lucide="link"></i><span>링크 공유</span>
+        </button>
+        <button class="share-item" id="sharePdf">
+          <i data-lucide="file-text"></i><span>PDF 공유</span>
+        </button>
+      </div>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">
+      <i data-lucide="menu"></i>
+    </button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <section id="hero" class="hero" data-bg="night">
+    <div class="container hero-inner">
+      <div class="hero-main">
+        <h1 class="hero-title">
+          <span class="ht-line ht-1">도시와 숲을</span>
+          <span class="ht-accent">잇는</span>
+          <span class="ht-line ht-2">공간을 설계합니다</span>
+        </h1>
+        <!-- 이름은 인적사항 데이터에서 채운다 -->
+        <p class="hero-name" id="heroName"></p>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-col">
+          <p class="meta-strong">GREEN SMART CITY<br>PORTFOLIO</p>
+          <p id="heroAffiliation"></p>
+        </div>
+        <div class="meta-col">
+          <p class="meta-strong">DESIGN PANEL<br>&amp; MEDIA</p>
+          <p>설계 판넬과<br>미디어 작업물</p>
+        </div>
+        <a href="#projects" class="scroll-cue" aria-label="작업물로 이동"></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Credentials strip — 활동·자격 데이터에서 채운다 -->
+  <div class="trust container reveal">
+    <p class="trust-label" id="trustLabel"></p>
+    <ul class="trust-items" id="trustItems"></ul>
+  </div>
+
+  <!-- Works -->
+  <section id="projects" class="section works" data-bg="vivid">
+    <div class="container works-layout">
+      <div class="works-intro reveal">
+        <span class="eyebrow">01 / 작업물</span>
+        <h2 class="statement">설계 판넬과 <em class="accent accent-mint">미디어,</em><br>지금까지의 작업물</h2>
+
+        <!-- Filter Tabs — 분야 목록에서 채운다 -->
+        <div class="filter-tabs" id="filterTabs"></div>
+      </div>
+
+      <!-- Projects Grid — 작업물 데이터에서 채운다 -->
+      <div class="projects-grid reveal" id="projectsGrid"></div>
+    </div>
+  </section>
+
+  <!-- About & Certifications -->
+  <section id="about" class="section about" data-bg="night">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">02 / 소개 &amp; 자격</span>
+        <h2 class="statement">학술 활동과 공모전,<br>그리고 <em class="accent accent-amber">보유 자격</em></h2>
+        <p class="section-desc">그동안의 활동 이력과 자격증 현황입니다.</p>
+      </div>
+
+      <!-- 활동·자격 데이터에서 채운다 -->
+      <ul class="about-list" id="aboutList"></ul>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section contact" data-bg="night">
+    <div class="container contact-layout">
+      <div class="section-head reveal">
+        <span class="eyebrow">03 / 연락처</span>
+        <h2 class="statement">인적사항 및<br><em class="accent accent-amber">연락처</em></h2>
+      </div>
+
+      <!-- 인적사항 데이터에서 채운다 -->
+      <dl class="contact-details reveal" id="contactDetails"></dl>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" data-bg="vivid">
+    <div class="container reveal">
+      <h2 class="cta-title">함께 이야기 나눌<br><em class="accent accent-mint">준비가</em> 되어 있습니다</h2>
+      <a href="#contact" class="btn-pill">
+        <span>연락처 보기</span>
+        <span class="arrow-circle"><i data-lucide="arrow-up-right"></i></span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer" data-bg="night">
+  <div class="container">
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>메뉴</h4>
+        <ul>
+          <li><a href="#hero">홈</a></li>
+          <li><a href="#projects">작업물</a></li>
+          <li><a href="#about">소개 &amp; 자격</a></li>
+          <li><a href="#contact">연락처</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>작업물</h4>
+        <ul id="footerWorks"></ul>
+      </div>
+      <div class="footer-col">
+        <h4>소개</h4>
+        <ul id="footerAbout"></ul>
+      </div>
+      <div class="footer-col">
+        <h4>연락처</h4>
+        <ul id="footerContact"></ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p id="footerCopyright"></p>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal 1: 이미지 뷰어 — 제목과 그림은 눌린 작업물에 맞춰 채운다 -->
+<div class="modal" id="panelModal" role="dialog" aria-modal="true" aria-labelledby="panelModalTitle">
+  <div class="modal-backdrop" id="panelModalBackdrop"></div>
+  <div class="modal-container modal-image">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h3 id="panelModalTitle"></h3>
+      </div>
+      <div class="modal-controls">
+        <button class="btn-icon" id="zoomInBtn" title="확대"><i data-lucide="zoom-in"></i></button>
+        <button class="btn-icon" id="zoomOutBtn" title="축소"><i data-lucide="zoom-out"></i></button>
+        <button class="btn-icon" id="zoomResetBtn" title="원래 크기"><i data-lucide="rotate-ccw"></i></button>
+        <button class="btn-icon btn-close" id="closePanelModal" title="닫기"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+    <div class="modal-body modal-body-image">
+      <div class="image-viewer-wrapper" id="imageWrapper">
+        <img alt="" id="panelViewerImg">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: 영상 플레이어 -->
+<div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+  <div class="modal-backdrop" id="videoModalBackdrop"></div>
+  <div class="modal-container modal-video">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <h3 id="videoModalTitle"></h3>
+      </div>
+      <button class="btn-icon btn-close" id="closeVideoModal" title="닫기"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body modal-body-video">
+      <!-- autoplay 없음: 페이지를 열자마자 영상이 재생되지 않도록 한다.
+           영상 주소는 사용자가 버튼을 누른 순간에만 넣으므로,
+           모달을 열기 전까지는 영상을 내려받지 않는다.
+           playsinline 은 iOS 에서 전체화면으로 튀는 것을 막는다. -->
+      <video controls playsinline preload="none" id="modalVideoPlayer">
+        브라우저가 비디오 태그를 지원하지 않습니다.
+      </video>
+    </div>
+  </div>
+</div>
+
+<!-- PDF 공유 — 누르는 순간 페이지 내용을 읽어 이 안에 문서를 채운다 (인쇄할 때만 보임) -->
+<div class="print-doc" id="printDoc" aria-hidden="true"></div>
+
+<!-- 내장 데이터 — 서버가 없을 때 대신 쓴다. build.py 가 data/portfolio.json 을 여기에 넣는다. -->
+<script type="application/json" id="portfolioData">null</script>
+
+<!-- Script — 순서를 지켜야 한다 (api → render → ui → main) -->
+<script src="js/api.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
