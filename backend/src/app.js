@@ -50,6 +50,14 @@ export function createApp() {
     app.get(urlPath, (req, res) => res.sendFile(filePath));
   }
 
+  // 관리자 화면은 브라우저에 저장해 두지 않습니다.
+  // 오래된 화면과 새 스크립트가 섞이면 버튼이 먹통이 되기 때문입니다.
+  // (로그인 화면이 브라우저에 남지 않게 하려는 뜻도 있습니다)
+  app.use('/admin', (req, res, next) => {
+    res.set('Cache-Control', 'no-store');
+    next();
+  });
+
   // 화면 파일(HTML·CSS·JS·이미지)을 내보냅니다.
   app.use(express.static(config.frontendDir));
 

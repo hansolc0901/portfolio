@@ -83,14 +83,25 @@ function removeStore(key) {
 // 서버와 주고받기
 // --------------------------------------------------------------------------
 async function api(path, { method = 'GET', body } = {}) {
-  const response = await fetch(`/api/admin${path}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let response;
+
+  try {
+    response = await fetch(`/api/admin${path}`, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    // 서버가 꺼져 있거나 주소가 맞지 않을 때입니다.
+    // 무엇을 해야 하는지 알려 주지 않으면 원인을 찾기 어렵습니다.
+    throw new Error(
+      '서버에 연결하지 못했습니다.\n' +
+        '터미널에서 backend 폴더로 가서 npm start 로 서버를 켠 뒤 다시 시도해 주세요.',
+    );
+  }
 
   const payload = await response.json().catch(() => ({}));
 
@@ -719,3 +730,15 @@ $('buildButton').addEventListener('click', async () => {
 // 들어올 때는 언제나 로그인 화면부터 보여 줍니다.
 // 출입증을 어디에도 저장하지 않으므로 새로고침해도, 새 창으로 열어도 마찬가지입니다.
 showLogin();
+
+// 파일을 직접 열면(file://) 서버에 연결할 수 없어 로그인이 되지 않습니다.
+// 이때 아무 반응이 없으면 원인을 알기 어려우므로 미리 알려 줍니다.
+if (!location.protocol.startsWith('http')) {
+  showMessage(
+    $('loginMessage'),
+    '이 페이지는 서버를 통해 열어야 합니다.\n주소창에 http://localhost:4000/admin 을 입력해 주세요.',
+    'error',
+  );
+  $('passwordInput').disabled = true;
+  $('loginButton').disabled = true;
+}
