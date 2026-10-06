@@ -33,8 +33,13 @@
 <div class="admin" id="adminScreen" hidden>
 
   <header class="admin-header">
-    <h1>작업물 관리</h1>
+    <h1 id="adminTitle">작업물 관리</h1>
     <div class="header-actions">
+      <!-- 화면 전환 탭. 같은 페이지 안에서 바꿔 보여 주므로 다시 로그인하지 않아도 됩니다. -->
+      <nav class="admin-tabs" role="tablist" aria-label="관리 화면 선택">
+        <button type="button" class="tab" role="tab" id="tabProjects" data-view="projects" aria-selected="true">작업물 관리</button>
+        <button type="button" class="tab" role="tab" id="tabReservations" data-view="reservations" aria-selected="false">예약하기 관리</button>
+      </nav>
       <a class="btn ghost" href="/" target="_blank" rel="noopener">사이트 보기</a>
       <button type="button" class="btn ghost" id="buildButton">배포용 파일 다시 만들기</button>
       <button type="button" class="btn ghost" id="logoutButton">로그아웃</button>
@@ -43,7 +48,7 @@
 
   <p class="message" id="globalMessage" hidden></p>
 
-  <div class="admin-body">
+  <div class="admin-body" id="projectsView">
 
     <!-- 왼쪽: 목록 -->
     <aside class="list-pane">
@@ -103,8 +108,35 @@
     </main>
 
   </div>
+
+  <!-- 예약하기 관리 -->
+  <section class="reservation-view" id="reservationsView" hidden>
+    <div class="pane-head">
+      <h2>예약 요청 목록</h2>
+      <span class="form-hint" id="reservationCount"></span>
+    </div>
+
+    <p class="message" id="reservationMessage" hidden></p>
+
+    <div class="table-wrap">
+      <table class="reservation-table">
+        <thead>
+          <tr>
+            <th scope="col">예약 번호</th>
+            <th scope="col">신청자/이메일</th>
+            <th scope="col">방문 희망 시간</th>
+            <th scope="col">방문 목적</th>
+            <th scope="col">처리 상태</th>
+            <th scope="col">관리</th>
+          </tr>
+        </thead>
+        <tbody id="reservationRows"></tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <script src="admin.js"></script>
+<script src="reservations.js"></script>
 </body>
 </html>

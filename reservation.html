@@ -517,47 +517,67 @@
     btn.disabled = true;
     btn.textContent = '저장 중...';
 
+    // 실패하면 응답 코드(status)를 담아 알린다. 409 = 이미 같은 예약이 있음
     function send(url, headers, body) {
       return fetch(url, {
         method: 'POST',
         headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
         body: JSON.stringify(body),
       }).then(res => {
-        if (!res.ok) throw new Error(res.status);
+        if (!res.ok) throw Object.assign(new Error('send failed'), { status: res.status });
       });
     }
 
-    const toSupabase = send(
-      SUPABASE_URL + '/rest/v1/reservations',
-      { apikey: SUPABASE_KEY, Prefer: 'return=minimal' },
-      {
-        visit_date: selectedDate,
-        visit_time: v.time,
-        name: v.name,
-        email: v.email,
-        purpose: v.purpose,
-        consent: v.consent,
-      }
-    );
+    function sendToSupabase() {
+      return send(
+        SUPABASE_URL + '/rest/v1/reservations',
+        { apikey: SUPABASE_KEY, Prefer: 'return=minimal' },
+        {
+          visit_date: selectedDate,
+          visit_time: v.time,
+          name: v.name,
+          email: v.email,
+          purpose: v.purpose,
+          consent: v.consent,
+        }
+      );
+    }
 
     // email 칸은 Formspree 가 알림 메일의 '답장 주소'로 쓴다.
-    const toFormspree = send(
-      FORMSPREE_URL,
-      { Accept: 'application/json' },
-      {
-        _subject: '[방문 예약] ' + v.name + ' · ' + formatKorean(selectedDate) + ' ' + v.time,
-        name: v.name,
-        email: v.email,
-        visit: formatKorean(selectedDate) + ' ' + v.time,
-        purpose: v.purpose,
-        consent: '동의함',
-      }
-    );
+    function sendToFormspree() {
+      return send(
+        FORMSPREE_URL,
+        { Accept: 'application/json' },
+        {
+          _subject: '[방문 예약] ' + v.name + ' · ' + formatKorean(selectedDate) + ' ' + v.time,
+          name: v.name,
+          email: v.email,
+          visit: formatKorean(selectedDate) + ' ' + v.time,
+          purpose: v.purpose,
+          consent: '동의함',
+        }
+      );
+    }
 
-    // 둘 중 하나에라도 남으면 접수된 것으로 본다. 둘 다 실패했을 때만 다시 시도하게 한다.
-    Promise.allSettled([toSupabase, toFormspree])
-      .then(results => {
-        if (results.every(r => r.status === 'rejected')) throw new Error('both failed');
+    function showModalError(text) {
+      $('modalError').textContent = text;
+      $('modalError').hidden = false;
+    }
+
+    // Supabase 에 먼저 저장한다.
+    //  - 같은 이메일로 같은 일시에 이미 신청했으면(409) 멈추고 알림 메일도 보내지 않는다.
+    //  - 그 밖의 이유로 실패해도 Formspree 메일이 가면 접수된 것으로 본다. 둘 다 실패할 때만 다시 시도하게 한다.
+    sendToSupabase()
+      .then(() => true, err => {
+        if (err.status === 409) throw err;
+        return false;
+      })
+      .then(saved => sendToFormspree().then(() => true, () => saved))
+      .then(received => {
+        if (!received) {
+          showModalError('저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+          return;
+        }
         $('reviewModal').hidden = true;
         $('reserveForm').hidden = true;
         $('doneText').textContent =
@@ -566,8 +586,7 @@
         $('done').hidden = false;
       })
       .catch(() => {
-        $('modalError').textContent = '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.';
-        $('modalError').hidden = false;
+        showModalError('같은 이메일로 이 날짜·시간에 이미 신청하셨습니다. 다른 시간을 골라 주세요.');
       })
       .finally(() => {
         btn.disabled = false;

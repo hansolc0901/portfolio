@@ -30,6 +30,11 @@ export const config = {
   // 쓰는 동안에는 계속 미뤄지므로 작업 중에 끊기지 않습니다. (기본 30분)
   sessionTtlMs: Number(process.env.SESSION_TTL_MINUTES || 30) * 60 * 1000,
 
+  // 방문 예약이 저장되는 Supabase 입니다. 관리자 화면의 '예약하기 관리' 탭이 씁니다.
+  // 비밀 키는 이 서버만 쓰고 화면으로는 내보내지 않습니다.
+  supabaseUrl: (process.env.SUPABASE_URL || '').replace(/\/+$/, ''),
+  supabaseSecretKey: process.env.SUPABASE_SECRET_KEY || '',
+
   // '배포용 파일 다시 만들기' 버튼이 실행할 파이썬 명령입니다.
   pythonBin: process.env.PYTHON_BIN || 'python',
 

@@ -157,6 +157,29 @@ npm run set-password -- 새비밀번호
 버튼이 동작하지 않으면 `backend/.env` 의 `PYTHON_BIN` 을 `python3` 또는
 파이썬 전체 경로로 바꿔 주세요.
 
+### 예약하기 관리
+
+로그인한 뒤 오른쪽 위의 **'예약하기 관리'** 탭을 누르면 방문 예약 표가 바로 보입니다.
+같은 페이지 안에서 화면만 바꾸므로 다시 로그인하지 않아도 되고, 작업물 입력 내용도 그대로 남습니다.
+
+| 열 | 내용 |
+|---|---|
+| 예약 번호 | `방문일-시간-이메일코드` (예: `261007-1500-A3F2`). 같은 이메일이면 코드가 같습니다 |
+| 신청자/이메일 | 이름과 답장받을 이메일 |
+| 방문 희망 시간 | 날짜·요일·시간 |
+| 방문 목적 | 적은 그대로 |
+| 처리 상태 | 접수 / 확정 / 변경 요청 / 취소 |
+| 관리 | 네 상태 중 하나를 눌러 바로 바꿈 |
+
+같은 이메일로 같은 일시에 두 번 신청하면 저장되지 않습니다. 같은 사람이라도 일시가 다르면 별도 예약입니다.
+
+처음 한 번 해야 할 일:
+
+1. Supabase 대시보드 → `portfolio-reservations` → SQL Editor 에서
+   `backend/sql/002_reservation_status_and_number.sql` 을 실행합니다.
+2. Project Settings → API Keys 의 secret 키를 `backend/.env` 의 `SUPABASE_SECRET_KEY` 에 붙여 넣고,
+   `SUPABASE_URL` 도 적은 뒤 서버를 다시 켭니다. (`.env.example` 참고)
+
 ## 배포용 파일 만들기
 
 `frontend/` 나 `data/portfolio.json` 을 고친 뒤 실행합니다.
@@ -231,6 +254,8 @@ git push                        # 3. 올리기 → 1~2분 뒤 사이트 반영
 | `PUT /api/admin/projects/:id` | 수정하기 |
 | `POST /api/admin/projects/:id/merge` | 중복 합치기 (남길 작업물의 빈 칸을 채우고 중복 항목을 지움) |
 | `POST /api/admin/build` | 배포용 index.html 다시 만들기 |
+| `GET /api/admin/reservations` | 방문 예약 목록과 처리 상태 정의 |
+| `PATCH /api/admin/reservations/:id/status` | 처리 상태 바꾸기 (본문: `{"status": "confirmed"}`) |
 
 새로 만들기와 수정하기는 제목이 겹치면 `409` 로 멈추고, 겹치는 작업물을 함께 알려 줍니다.
 그대로 저장하려면 본문에 `"allowDuplicate": true` 를 넣어 다시 보냅니다.

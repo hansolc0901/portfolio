@@ -133,6 +133,7 @@ function showLogin() {
 async function showAdmin() {
   $('loginScreen').hidden = true;
   $('adminScreen').hidden = false;
+  showView('projects');
 
   const { fields, statuses } = await api('/fields');
   state.fields = fields;
@@ -219,6 +220,35 @@ window.addEventListener('pageshow', (event) => {
     state.token = '';
     showLogin();
   }
+});
+
+// --------------------------------------------------------------------------
+// 화면 전환 탭 (작업물 관리 / 예약하기 관리)
+//
+// 다른 주소로 이동하지 않고 같은 페이지 안에서 바꿔 보여 줍니다.
+// 출입증이 메모리에만 있어서, 페이지를 옮기면 다시 로그인해야 하기 때문입니다.
+// 작업물 입력 중인 내용도 숨겨 둘 뿐이라 탭을 오가도 사라지지 않습니다.
+// --------------------------------------------------------------------------
+const VIEWS = {
+  projects: { title: '작업물 관리', panel: 'projectsView', tab: 'tabProjects' },
+  reservations: { title: '예약하기 관리', panel: 'reservationsView', tab: 'tabReservations' },
+};
+
+function showView(name) {
+  for (const [key, view] of Object.entries(VIEWS)) {
+    const active = key === name;
+    $(view.panel).hidden = !active;
+    $(view.tab).setAttribute('aria-selected', active);
+    $(view.tab).classList.toggle('is-active', active);
+  }
+  $('adminTitle').textContent = VIEWS[name].title;
+
+  // 예약은 방문자가 언제든 새로 넣으므로 탭을 열 때마다 새로 불러옵니다. (reservations.js)
+  if (name === 'reservations') loadReservations();
+}
+
+document.querySelectorAll('.admin-tabs .tab').forEach((tab) => {
+  tab.addEventListener('click', () => showView(tab.dataset.view));
 });
 
 // --------------------------------------------------------------------------

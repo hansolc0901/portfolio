@@ -305,11 +305,99 @@ input:focus, textarea:focus {
 
 .admin > .message { margin: 18px 24px 0; }
 
+/* ── 화면 전환 탭 ──────────────────────────────────────── */
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-right: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.tab {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.tab:hover { color: var(--text); }
+.tab.is-active { background: var(--panel-2); color: var(--mint); font-weight: 600; }
+
+/* ── 예약하기 관리 ─────────────────────────────────────── */
+.reservation-view {
+  margin: 24px;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+/* 좁은 화면에서는 표만 옆으로 밀어 볼 수 있게 한다. */
+.table-wrap { overflow-x: auto; }
+
+.reservation-table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.reservation-table th {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+.reservation-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.reservation-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+.cell-number { font-family: Consolas, 'Courier New', monospace; font-size: 13px; white-space: nowrap; }
+.cell-name { display: block; font-weight: 600; }
+.cell-email { display: block; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.cell-visit { white-space: nowrap; }
+.cell-purpose { max-width: 320px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+.table-empty { padding: 32px 12px; color: var(--muted); text-align: center; }
+
+/* 처리 상태별 색 — 표의 배지와 관리 버튼이 같은 색을 쓴다. */
+.status-received { --status-color: var(--muted); }
+.status-confirmed { --status-color: var(--mint); }
+.status-change_requested { --status-color: var(--amber); }
+.status-cancelled { --status-color: var(--red); }
+
+.badge[class*="status-"] {
+  color: var(--status-color);
+  background: color-mix(in srgb, var(--status-color) 16%, transparent);
+}
+
+.status-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.status-btn { white-space: nowrap; }
+.status-btn.is-current {
+  border-color: var(--status-color);
+  background: color-mix(in srgb, var(--status-color) 18%, transparent);
+  color: var(--status-color);
+  font-weight: 600;
+  cursor: default;
+}
+
 /* ── 좁은 화면 ─────────────────────────────────────────── */
 @media (max-width: 860px) {
   .admin-body { grid-template-columns: 1fr; }
   .admin-header { flex-direction: column; align-items: stretch; }
   .header-actions .btn { flex: 1; text-align: center; }
+  .admin-tabs { width: 100%; margin-right: 0; }
+  .tab { flex: 1; }
+  .reservation-view { margin: 16px; padding: 16px; }
 }
 
 @media (max-width: 560px) {

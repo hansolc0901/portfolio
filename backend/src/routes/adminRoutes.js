@@ -13,6 +13,7 @@ import { PROJECT_FIELDS, PROJECT_STATUSES } from '../projects/projectFields.js';
 import { validateProject, buildNewProject } from '../projects/projectValidation.js';
 import { findDuplicate, findDuplicateIds, fillEmptyFields } from '../projects/duplicates.js';
 import { runBuild } from '../services/buildRunner.js';
+import { createReservationRouter } from './reservationRoutes.js';
 
 function fail(res, status, message, fields) {
   res.status(status).json({ error: { status, message, fields } });
@@ -172,6 +173,9 @@ export function createAdminRouter(repository) {
 
     res.json({ data: { project, filledLabels, removed } });
   });
+
+  // 방문 예약 목록과 처리 상태
+  router.use('/reservations', createReservationRouter());
 
   // 배포용 index.html 다시 만들기
   router.post('/build', async (req, res) => {
