@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방문 예약 | 최한솔 포트폴리오</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #030405;
+      --white: #f4f4f2;
+      --muted: rgba(244, 244, 242, 0.62);
+      --line: rgba(244, 244, 242, 0.16);
+      --sans: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      --pad: clamp(16px, 6vw, 80px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--sans);
+      line-height: 1.6;
+      color: var(--white);
+      background: var(--black);
+      -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 var(--pad); }
+
+    .site-header { border-bottom: 1px solid var(--line); }
+    .navbar { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+    .nav-logo { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; }
+    .nav-back { font-size: 13px; color: var(--muted); }
+    .nav-back:hover { color: var(--white); }
+
+    main { padding: 56px 0 96px; }
+    h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="index.html" class="nav-logo">CHOI HANSOL</a>
+    <a href="visit.html" class="nav-back">← 찾아오는 길로 돌아가기</a>
+  </nav>
+</header>
+
+<main class="container">
+  <h1>방문 예약</h1>
+</main>
+
+</body>
+</html>
