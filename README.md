@@ -173,10 +173,15 @@ npm run set-password -- 새비밀번호
 
 같은 이메일로 같은 일시에 두 번 신청하면 저장되지 않습니다. 같은 사람이라도 일시가 다르면 별도 예약입니다.
 
+같은 날짜·시간에는 예약을 하나만 받습니다. 이미 예약된 시간은 예약 페이지의 시간 목록에
+`15:00 (완료)` 처럼 표시되고 고를 수 없습니다. 예약을 **취소**하면 그 시간이 다시 열립니다.
+(접수·확정·변경 요청은 시간을 계속 잡고 있습니다)
+
 처음 한 번 해야 할 일:
 
 1. Supabase 대시보드 → `portfolio-reservations` → SQL Editor 에서
-   `backend/sql/002_reservation_status_and_number.sql` 을 실행합니다.
+   `backend/sql/002_reservation_status_and_number.sql` 과
+   `backend/sql/003_one_reservation_per_slot.sql` 을 **순서대로** 실행합니다.
 2. Project Settings → API Keys 의 secret 키를 `backend/.env` 의 `SUPABASE_SECRET_KEY` 에 붙여 넣고,
    `SUPABASE_URL` 도 적은 뒤 서버를 다시 켭니다. (`.env.example` 참고)
 

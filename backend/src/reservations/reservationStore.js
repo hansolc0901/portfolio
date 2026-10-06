@@ -59,6 +59,14 @@ async function request(path, { method = 'GET', body } = {}) {
           'backend/sql/002_reservation_status_and_number.sql 을 Supabase SQL Editor 에서 실행해 주세요.',
       );
     }
+    // 23505: 같은 날짜·시간에 이미 다른 예약이 있음 (취소된 예약을 되살리려 할 때 생길 수 있습니다)
+    if (payload?.code === '23505') {
+      throw new HttpError(
+        409,
+        '같은 날짜·시간에 이미 다른 예약이 있어 이 상태로 바꿀 수 없습니다.\n' +
+          '다른 예약을 먼저 취소하거나, 이 예약은 취소 상태로 두세요.',
+      );
+    }
     if (response.status === 401 || response.status === 403) {
       throw new HttpError(503, 'Supabase 비밀 키가 맞지 않습니다. backend/.env 의 SUPABASE_SECRET_KEY 를 확인해 주세요.');
     }
