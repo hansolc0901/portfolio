@@ -314,6 +314,9 @@
   const SUPABASE_URL = 'https://owptpdlhkgpxaidgokua.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_vZfS4WOpR09ZYbR0DnWidA_PVlKCB9A';
 
+  // 같은 예약을 Formspree 로도 보내 운영자 메일로 알림을 받는다.
+  const FORMSPREE_URL = 'https://formspree.io/f/mjygkkgp';
+
   // DB 의 검사 규칙과 같은 형식이다.
   const EMAIL_RULE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
   const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
@@ -514,24 +517,47 @@
     btn.disabled = true;
     btn.textContent = '저장 중...';
 
-    fetch(SUPABASE_URL + '/rest/v1/reservations', {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal',
-      },
-      body: JSON.stringify({
+    function send(url, headers, body) {
+      return fetch(url, {
+        method: 'POST',
+        headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
+        body: JSON.stringify(body),
+      }).then(res => {
+        if (!res.ok) throw new Error(res.status);
+      });
+    }
+
+    const toSupabase = send(
+      SUPABASE_URL + '/rest/v1/reservations',
+      { apikey: SUPABASE_KEY, Prefer: 'return=minimal' },
+      {
         visit_date: selectedDate,
         visit_time: v.time,
         name: v.name,
         email: v.email,
         purpose: v.purpose,
         consent: v.consent,
-      }),
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(res.status);
+      }
+    );
+
+    // email 칸은 Formspree 가 알림 메일의 '답장 주소'로 쓴다.
+    const toFormspree = send(
+      FORMSPREE_URL,
+      { Accept: 'application/json' },
+      {
+        _subject: '[방문 예약] ' + v.name + ' · ' + formatKorean(selectedDate) + ' ' + v.time,
+        name: v.name,
+        email: v.email,
+        visit: formatKorean(selectedDate) + ' ' + v.time,
+        purpose: v.purpose,
+        consent: '동의함',
+      }
+    );
+
+    // 둘 중 하나에라도 남으면 접수된 것으로 본다. 둘 다 실패했을 때만 다시 시도하게 한다.
+    Promise.allSettled([toSupabase, toFormspree])
+      .then(results => {
+        if (results.every(r => r.status === 'rejected')) throw new Error('both failed');
         $('reviewModal').hidden = true;
         $('reserveForm').hidden = true;
         $('doneText').textContent =
