@@ -83,8 +83,10 @@
   - 단, `build.py`는 아직 `data/portfolio.json`을 읽는다 (DB에서 읽도록 바꾸는 작업 남음)
 - 페이지 수정은 `frontend/`와 `data/portfolio.json`을 고친 뒤 `python build.py`로 `index.html`을 다시 만든다
   - 분리 이전 원본인 `source/`는 백업으로만 남겨 둔다 (빌드에 쓰이지 않음)
-- 화면은 백엔드 API를 먼저 부르고, 2초 안에 응답이 없으면 내장 데이터로 자동 전환한다
-  (서버 없이 `index.html` 파일 하나로도 동작하게 유지하기 위함, 사용자 결정)
+- 화면은 Supabase 함수 `get_public_portfolio()`를 먼저 부르고, 2초 안에 응답이 없으면 내장 데이터로 자동 전환한다
+  (DB를 고치면 새로고침만으로 사이트에 반영하기 위함, 사용자 결정. SQL은 `backend/sql/007`)
+  - 방문자는 공개 키로 이 함수만 부를 수 있다. 표 직접 읽기와 보조 함수 `pick_public_columns`는 막는다
+  - 함수가 공개 작업물의 공개 칸(`column_visibility`)만 돌려준다. 서버의 방문자용 데이터와 모양이 같다
 - 데이터를 어디서 읽을지는 `backend/src/repositories/` 한 곳에서만 정한다. 기본값은 `DATA_SOURCE=db`(Supabase)
 - 관리자 페이지(`/admin`)에서 작업물을 등록·수정한다. 기존 작업물(판넬·영상)도 같은 화면에서 관리한다 (사용자 결정)
   - 관리 항목: 제목·내가 한 역할·설명·날짜·참여인원수·참고사항. 참고사항만 선택 입력
@@ -143,7 +145,8 @@
 - 포트폴리오 내용을 Supabase(`portfolio-reservations` 프로젝트)로 옮긴다. 작업 브랜치는 `feature/portfolio-db` (사용자 결정)
   - 표: `profile`(1행)·`categories`·`projects`·`project_media`·`credentials`. SQL은 `backend/sql/004`, `005`
   - 접속은 `pg` 대신 예약과 같은 Supabase REST + `SUPABASE_SECRET_KEY`. `DATABASE_URL`은 쓰지 않는다
-  - 배포 사이트는 DB를 직접 읽지 않는다. `build.py`가 DB 내용으로 `index.html`을 만든다. 새 표는 anon 읽기·쓰기 모두 차단
+  - 새 표는 anon 읽기·쓰기 모두 차단. 배포 사이트는 `get_public_portfolio()` 함수로만 읽는다
+  - `build.py`가 `index.html`에 담는 내장 데이터는 DB가 응답하지 않을 때의 대비용이다
   - 사진·영상 파일은 지금 위치에 두고 표에는 경로만 적는다
   - 행 공개는 `projects.status`, 열 공개는 `column_visibility` 표가 정한다. 등록되지 않은 칸은 비공개
   - 인적사항 칸은 모두 공개로 둔다 (사용자 결정. 숨기려면 `column_visibility`에서 private로 변경)
