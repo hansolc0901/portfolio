@@ -1,6 +1,10 @@
 # Node.js
 node_modules/
+
+# 비밀 키가 들어 있는 설정 파일은 올리지 않습니다. 빈 양식(.env.example)만 올립니다.
 .env
+.env.*
+!.env.example
 
 # 프론트/백엔드 분리 이전의 원본입니다. frontend/ 로 옮겨졌습니다.
 source/

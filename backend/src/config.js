@@ -13,14 +13,11 @@ export const ROOT = path.resolve(thisDir, '..', '..');
 export const config = {
   port: Number(process.env.PORT) || 4000,
 
-  // 'json' 또는 'db'. repositories/index.js 가 이 값을 보고 저장소를 고릅니다.
-  dataSource: process.env.DATA_SOURCE || 'json',
+  // 'db'(Supabase, 기본) 또는 'json'. repositories/index.js 가 이 값을 보고 저장소를 고릅니다.
+  dataSource: process.env.DATA_SOURCE || 'db',
 
-  // DATA_SOURCE=json 일 때 읽을 파일
+  // DATA_SOURCE=json 일 때 읽을 파일. DB 에 문제가 생겼을 때 되돌아갈 백업입니다.
   dataFile: process.env.DATA_FILE || path.join(ROOT, 'data', 'portfolio.json'),
-
-  // DATA_SOURCE=db 일 때 접속할 데이터베이스 주소
-  databaseUrl: process.env.DATABASE_URL || '',
 
   // 관리자 비밀번호입니다. 되돌릴 수 없는 형태(해시)로만 보관합니다.
   // 값을 정하려면: cd backend && npm run set-password -- 새비밀번호

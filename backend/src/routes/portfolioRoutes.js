@@ -26,7 +26,7 @@ export function createPortfolioRouter(repository) {
   });
 
   router.get('/profile', async (req, res) => {
-    send(res, await repository.getProfile());
+    send(res, await repository.getProfile(PUBLIC_ONLY));
   });
 
   router.get('/projects', async (req, res) => {
@@ -45,11 +45,11 @@ export function createPortfolioRouter(repository) {
   });
 
   router.get('/credentials', async (req, res) => {
-    send(res, await repository.getCredentials());
+    send(res, await repository.getCredentials(PUBLIC_ONLY));
   });
 
   router.get('/credentials/:id', async (req, res) => {
-    const credentials = await repository.getCredentials();
+    const credentials = await repository.getCredentials(PUBLIC_ONLY);
     const credential = credentials.find((item) => item.id === req.params.id);
 
     if (!credential) {

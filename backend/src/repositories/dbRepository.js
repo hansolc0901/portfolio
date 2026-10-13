@@ -1,190 +1,235 @@
-// 데이터베이스에서 데이터를 읽는 저장소입니다. (아직 비어 있는 뼈대)
+// Supabase 표에서 데이터를 읽고 쓰는 저장소입니다.
 //
-// 지금은 아무것도 하지 않습니다. DB 를 붙일 때 이 파일만 채우면 됩니다.
-// 라우트·화면 코드는 한 줄도 고치지 않아도 됩니다.
+// backend/.env 에서 DATA_SOURCE=db 로 바꾸면 이 저장소를 씁니다.
+// 돌려주는 모양은 jsonRepository 와 같아서 라우트·화면 코드는 고치지 않아도 됩니다.
 //
-// ─────────────────────────────────────────────────────────────
-// DB 를 붙이는 순서
-// ─────────────────────────────────────────────────────────────
-// 1. 드라이버를 설치합니다.
-//      PostgreSQL → cd backend && npm install pg
-//      MySQL      → cd backend && npm install mysql2
-//      SQLite     → cd backend && npm install better-sqlite3
-//
-// 2. 아래 "표 설계" 대로 표(table)를 만듭니다.
-//
-// 3. 이 파일의 주석 처리된 코드를 참고해 네 함수를 채웁니다.
-//
-// 4. backend/.env 에서 두 값을 바꿉니다.
-//      DATA_SOURCE=db
-//      DATABASE_URL=postgresql://아이디:비밀번호@localhost:5432/portfolio
-//
-// 5. 서버를 다시 켭니다. 화면은 그대로 동작합니다.
-//
-// ─────────────────────────────────────────────────────────────
-// 표 설계 — data/portfolio.json 의 구조를 그대로 옮긴 것입니다
-// ─────────────────────────────────────────────────────────────
-//   profile      : name, name_en, gender, birth_date,
-//                  university, department, student_id, phone, copyright_year
-//   filters      : value(PK), label, sort_order
-//   projects     : id(PK), status, category, title, tag, description,
-//                  role, date, team_size, notes,
-//                  overlay_label, action_label, action_icon,
-//                  viewer_title, media(JSON), sort_order,
-//                  created_at, updated_at
-//   credentials  : id(PK), category, title, short_label,
-//                  description, icon, sort_order
-//
-// 화면은 목록의 순서를 그대로 보여주므로 sort_order 로 정렬해 주세요.
-// media 는 값의 모양이 image 와 video 가 서로 달라서 JSON 컬럼이 편합니다.
-// status 는 'draft' 또는 'published' 두 값만 들어갑니다.
-// ─────────────────────────────────────────────────────────────
+// 공개 여부는 두 가지로 정합니다.
+//   행: projects.status 가 'published' 인 작업물과 그 사진·영상만
+//   칸: column_visibility 표에서 public 인 칸만 (표에 없는 칸은 비공개)
+// 방문자용으로 읽을 때(onlyPublished: true)만 걸러 내고, 관리자는 모두 봅니다.
+import { HttpError } from '../middleware/errors.js';
+import { supabaseRequest } from '../supabase/client.js';
 
-// DB 를 붙이기 전에 실수로 켰을 때 무엇을 해야 하는지 알려 줍니다.
-function notImplemented(functionName) {
-  throw new Error(
-    `dbRepository.${functionName}() 이 아직 구현되지 않았습니다.\n` +
-      'backend/src/repositories/dbRepository.js 를 채우거나,\n' +
-      'backend/.env 에서 DATA_SOURCE 를 json 으로 되돌리세요.',
+// '전체'는 실제 분야가 아니라서 DB 에 두지 않고 여기서 맨 앞에 붙입니다.
+const ALL_FILTER = { value: 'all', label: '전체' };
+
+// DB 칸 이름 → 화면이 쓰는 이름
+// 여기에 없는 칸(id, sort_order 등)은 관리용이라 밖으로 내보내지 않습니다.
+const FIELDS = {
+  profile: {
+    name: 'name',
+    name_en: 'nameEn',
+    gender: 'gender',
+    birth_date: 'birthDate',
+    university: 'university',
+    department: 'department',
+    student_id: 'studentId',
+    phone: 'phone',
+    copyright_year: 'copyrightYear',
+  },
+  categories: {
+    value: 'value',
+    label: 'label',
+  },
+  projects: {
+    id: 'id',
+    status: 'status',
+    category: 'category',
+    title: 'title',
+    tag: 'tag',
+    description: 'description',
+    role: 'role',
+    period: 'date',
+    team_size: 'teamSize',
+    notes: 'notes',
+    overlay_label: 'overlayLabel',
+    action_label: 'actionLabel',
+    action_icon: 'actionIcon',
+    viewer_title: 'viewerTitle',
+    created_at: 'createdAt',
+    updated_at: 'updatedAt',
+  },
+  project_media: {
+    type: 'type',
+    src: 'src',
+    thumb_src: 'thumbSrc',
+    mime_type: 'mimeType',
+    alt: 'alt',
+  },
+  credentials: {
+    id: 'id',
+    category: 'category',
+    title: 'title',
+    short_label: 'shortLabel',
+    description: 'description',
+    icon: 'icon',
+  },
+};
+
+const PROJECT_SELECT = '*,project_media(*)&project_media.order=sort_order';
+
+// 공개 칸 목록을 'projects.title' 같은 모양으로 모읍니다.
+async function loadPublicColumns() {
+  const rows = await supabaseRequest(
+    'column_visibility?select=table_name,column_name&visibility=eq.public',
   );
+  return new Set(rows.map((row) => `${row.table_name}.${row.column_name}`));
+}
+
+// DB 한 행을 화면용 이름으로 바꿉니다.
+// publicColumns 가 있으면 공개 칸만 남깁니다. (null 이면 관리자용으로 모두)
+function toApi(table, row, publicColumns) {
+  const result = {};
+  for (const [column, key] of Object.entries(FIELDS[table])) {
+    if (!(column in row)) continue;
+    if (publicColumns && !publicColumns.has(`${table}.${column}`)) continue;
+    result[key] = row[column];
+  }
+  return result;
+}
+
+function toMedia(row, publicColumns) {
+  const media = toApi('project_media', row, publicColumns);
+
+  // 사진은 확대용 원본을 fullSrc 로 부릅니다. (영상은 src 그대로)
+  if (row.type === 'image' && 'src' in media) {
+    media.fullSrc = media.src;
+    delete media.src;
+  }
+  // 사진에는 영상 형식이, 영상에는 썸네일이 없으므로 빈 값은 뺍니다.
+  for (const key of Object.keys(media)) {
+    if (media[key] === null) delete media[key];
+  }
+  return media;
+}
+
+function toProject(row, publicColumns) {
+  const project = toApi('projects', row, publicColumns);
+
+  // 분야가 없는 작업물은 DB 에 null 로, 화면에는 빈 문자열로 둡니다. (JSON 과 같은 모양)
+  if ('category' in project) project.category = project.category ?? '';
+
+  const [first] = row.project_media ?? [];
+  if (first) project.media = toMedia(first, publicColumns);
+  return project;
+}
+
+// 화면용 이름 → DB 칸 이름. 들어온 칸만 바꿉니다.
+function toProjectRow(project) {
+  const row = {};
+  for (const [column, key] of Object.entries(FIELDS.projects)) {
+    if (key in project) row[column] = project[key];
+  }
+  if ('category' in row) row.category = row.category || null;
+  return row;
+}
+
+// 사진·영상이 달린 작업물을 지우려 하면 DB 가 막습니다 (23503).
+function explainProjectError(payload) {
+  if (payload?.code === '23503') {
+    return new HttpError(
+      400,
+      '사진·영상이 있는 작업물은 지울 수 없습니다. 제목을 다르게 바꿔 주세요.',
+    );
+  }
+  return null;
+}
+
+function projectRequest(path, options = {}) {
+  return supabaseRequest(path, { ...options, explainError: explainProjectError });
+}
+
+async function readProfile(publicColumns) {
+  const [row] = await supabaseRequest('profile?select=*&id=eq.1');
+  return row ? toApi('profile', row, publicColumns) : null;
+}
+
+async function readFilters(publicColumns) {
+  const rows = await supabaseRequest('categories?select=*&order=sort_order');
+  return [ALL_FILTER, ...rows.map((row) => toApi('categories', row, publicColumns))];
+}
+
+async function readProjects(onlyPublished, publicColumns) {
+  const where = onlyPublished ? '&status=eq.published' : '';
+  const rows = await projectRequest(`projects?select=${PROJECT_SELECT}${where}&order=sort_order`);
+  return rows.map((row) => toProject(row, publicColumns));
+}
+
+async function readCredentials(publicColumns) {
+  const rows = await supabaseRequest('credentials?select=*&order=sort_order');
+  return rows.map((row) => toApi('credentials', row, publicColumns));
+}
+
+// 방문자용이면 공개 칸 목록을, 관리자용이면 null(모두)을 돌려줍니다.
+function publicColumnsFor(onlyPublished) {
+  return onlyPublished ? loadPublicColumns() : null;
 }
 
 /**
- * @param {{ databaseUrl: string }} options
  * @returns {import('./portfolioRepository.js').PortfolioRepository}
  */
-export function createDbRepository({ databaseUrl }) {
-  if (!databaseUrl) {
-    throw new Error(
-      'DATABASE_URL 이 비어 있습니다. backend/.env 에 접속 주소를 적어 주세요.',
-    );
-  }
-
-  // ── 1단계: 연결 만들기 (PostgreSQL 예시) ──────────────────
-  // import pg from 'pg';
-  // const pool = new pg.Pool({ connectionString: databaseUrl });
-
+export function createDbRepository() {
   return {
-    async getPortfolio() {
-      // 네 가지를 한 번에 모아 JSON 파일과 똑같은 모양으로 돌려줍니다.
-      //
-      // const [profile, filters, projects, credentials] = await Promise.all([
-      //   this.getProfile(),
-      //   this.getFilters(),
-      //   this.getProjects(),
-      //   this.getCredentials(),
-      // ]);
-      // return { profile, filters, projects, credentials };
-
-      return notImplemented('getPortfolio');
+    async getPortfolio({ onlyPublished = false } = {}) {
+      const publicColumns = await publicColumnsFor(onlyPublished);
+      const [profile, filters, projects, credentials] = await Promise.all([
+        readProfile(publicColumns),
+        readFilters(publicColumns),
+        readProjects(onlyPublished, publicColumns),
+        readCredentials(publicColumns),
+      ]);
+      return { profile, filters, projects, credentials };
     },
 
-    async getProfile() {
-      // const { rows } = await pool.query('SELECT * FROM profile LIMIT 1');
-      // const row = rows[0];
-      // 컬럼 이름(name_en)과 화면이 쓰는 이름(nameEn)이 다르므로 여기서 바꿔 줍니다.
-      // return {
-      //   name: row.name,
-      //   nameEn: row.name_en,
-      //   gender: row.gender,
-      //   birthDate: row.birth_date,
-      //   university: row.university,
-      //   department: row.department,
-      //   studentId: row.student_id,
-      //   phone: row.phone,
-      // };
-
-      return notImplemented('getProfile');
+    async getProfile({ onlyPublished = false } = {}) {
+      return readProfile(await publicColumnsFor(onlyPublished));
     },
 
     async getProjects({ onlyPublished = false } = {}) {
-      // onlyPublished 가 true 면 초안을 빼고 돌려줍니다.
-      // 방문자용 주소는 true, 관리자용 주소는 false 로 부릅니다.
-      //
-      // const where = onlyPublished ? "WHERE status = 'published'" : '';
-      // const { rows } = await pool.query(
-      //   `SELECT * FROM projects ${where} ORDER BY sort_order`,
-      // );
-      // return rows.map(toProject);
-
-      return notImplemented('getProjects');
+      return readProjects(onlyPublished, await publicColumnsFor(onlyPublished));
     },
 
+    // 초안도 찾을 수 있어야 합니다. 관리자 화면이 이 함수를 씁니다.
     async getProject(id) {
-      // 초안도 찾을 수 있어야 합니다. 관리자 화면이 이 함수를 씁니다.
-      //
-      // const { rows } = await pool.query(
-      //   'SELECT * FROM projects WHERE id = $1', [id],
-      // );
-      // return rows[0] ? toProject(rows[0]) : null;
-
-      return notImplemented('getProject');
+      const [row] = await projectRequest(
+        `projects?select=${PROJECT_SELECT}&id=eq.${encodeURIComponent(id)}`,
+      );
+      return row ? toProject(row, null) : null;
     },
 
+    async getCredentials({ onlyPublished = false } = {}) {
+      return readCredentials(await publicColumnsFor(onlyPublished));
+    },
+
+    // 새 작업물은 목록 맨 뒤에 붙입니다.
     async createProject(project) {
-      // const { rows } = await pool.query(
-      //   `INSERT INTO projects (id, status, title, role, description,
-      //                          date, team_size, notes, category, tag,
-      //                          created_at, updated_at)
-      //    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, NOW(), NOW())
-      //    RETURNING *`,
-      //   [project.id, project.status, project.title, project.role,
-      //    project.description, project.date, project.teamSize,
-      //    project.notes, project.category, project.tag],
-      // );
-      // return toProject(rows[0]);
+      const [last] = await supabaseRequest('projects?select=sort_order&order=sort_order.desc&limit=1');
+      const row = { ...toProjectRow(project), sort_order: (last?.sort_order ?? -1) + 1 };
 
-      return notImplemented('createProject');
+      const [created] = await projectRequest('projects', { method: 'POST', body: row });
+      return toProject(created, null);
     },
 
+    // 바뀐 칸만 덮어씁니다. 사진·영상은 다른 표에 있어 그대로 남습니다.
     async updateProject(id, patch) {
-      // 바뀐 칸만 덮어쓰고, 나머지 칸(사진·영상 등)은 그대로 두어야 합니다.
-      //
-      // const { rows } = await pool.query(
-      //   `UPDATE projects SET
-      //      status = COALESCE($2, status),
-      //      title = COALESCE($3, title),
-      //      role = COALESCE($4, role),
-      //      description = COALESCE($5, description),
-      //      date = COALESCE($6, date),
-      //      team_size = $7,
-      //      notes = COALESCE($8, notes),
-      //      updated_at = NOW()
-      //    WHERE id = $1
-      //    RETURNING *`,
-      //   [id, patch.status, patch.title, patch.role, patch.description,
-      //    patch.date, patch.teamSize, patch.notes],
-      // );
-      // return rows[0] ? toProject(rows[0]) : null;
+      const row = { ...toProjectRow(patch), updated_at: new Date().toISOString() };
+      delete row.id;
+      delete row.created_at;
 
-      return notImplemented('updateProject');
+      const updated = await projectRequest(`projects?id=eq.${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        body: row,
+      });
+      if (updated.length === 0) return null;
+      return this.getProject(id);
     },
 
+    // 중복을 하나로 합칠 때 남는 쪽을 지우는 데 씁니다.
     async deleteProject(id) {
-      // 중복을 하나로 합칠 때 남는 쪽을 지우는 데 씁니다.
-      //
-      // const { rowCount } = await pool.query(
-      //   'DELETE FROM projects WHERE id = $1', [id],
-      // );
-      // return rowCount > 0;
-
-      return notImplemented('deleteProject');
-    },
-
-    async getCredentials() {
-      // const { rows } = await pool.query(
-      //   'SELECT * FROM credentials ORDER BY sort_order',
-      // );
-      // return rows.map((row) => ({
-      //   id: row.id,
-      //   category: row.category,
-      //   title: row.title,
-      //   shortLabel: row.short_label,
-      //   description: row.description,
-      //   icon: row.icon,
-      // }));
-
-      return notImplemented('getCredentials');
+      const removed = await projectRequest(`projects?id=eq.${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      });
+      return removed.length > 0;
     },
   };
 }

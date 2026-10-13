@@ -8,11 +8,12 @@
 
 ```
 .
-├── data/portfolio.json     모든 내용의 원본. 여기만 고치면 화면·PDF가 함께 바뀝니다
+├── data/portfolio.json     DB 로 옮기기 전의 원본. 지금은 백업 (DATA_SOURCE=json 일 때만 사용)
 │
 ├── backend/                Node.js + Express API 서버
 │   ├── server.js           서버를 켜는 곳
-│   ├── scripts/            관리자 비밀번호 정하기
+│   ├── scripts/            관리자 비밀번호 정하기, JSON → DB 옮기기
+│   ├── sql/                Supabase 에 실행한 SQL (번호 순)
 │   └── src/
 │       ├── config.js       설정값 모음 (환경변수는 여기서만 읽습니다)
 │       ├── app.js          서버 조립
@@ -270,23 +271,29 @@ git push                        # 3. 올리기 → 1~2분 뒤 사이트 반영
 단독 삭제는 없습니다. 지우고 싶은 작업물은 **초안**으로 바꾸면 방문자에게 보이지 않고,
 중복이라면 합치기로 정리할 수 있습니다.
 
-## 나중에 데이터베이스를 붙일 때
+## 데이터베이스 (Supabase)
 
-**고칠 파일은 한 개입니다.** `backend/src/repositories/dbRepository.js` 를 채우면 됩니다.
+포트폴리오 내용은 Supabase(`portfolio-reservations` 프로젝트)의 표에 있습니다.
+서버는 `backend/src/repositories/dbRepository.js` 로 읽고 씁니다.
 
-라우트와 화면 코드는 데이터가 어디서 오는지 모르게 만들어 두었기 때문에,
-JSON 파일에서 DB 로 바꿔도 다른 파일은 고치지 않습니다.
+| 표 | 내용 |
+|---|---|
+| `profile` | 인적사항 (1행) |
+| `categories` | 분야 필터 탭 ('전체'는 서버가 붙임) |
+| `projects` | 작업물. `status` 가 `published` 인 것만 방문자에게 보임 |
+| `project_media` | 작업물의 사진·영상 경로 (파일은 저장소에 그대로) |
+| `credentials` | 학술 활동·공모전·자격 |
+| `column_visibility` | 표·칸별 공개 여부. 방문자용에는 `public` 칸만 나감 (없는 칸은 비공개) |
 
-1. 드라이버 설치 — 예) `cd backend && npm install pg`
-2. `dbRepository.js` 위쪽 주석의 "표 설계" 대로 표를 만듭니다
-3. 주석 처리된 예시를 참고해 일곱 함수를 채웁니다
-   - 읽기: `getPortfolio`, `getProfile`, `getProjects`, `getProject`, `getCredentials`
-   - 쓰기: `createProject`, `updateProject`
-4. `backend/.env` 에서 `DATA_SOURCE=db`, `DATABASE_URL=...` 로 바꿉니다
-5. 서버를 다시 켭니다
+- 방문자(공개 키)는 이 표들을 읽지도 쓰지도 못합니다. 서버만 비밀 키로 접근합니다.
+- 칸을 숨기려면 Table Editor 에서 `column_visibility` 의 `visibility` 를 `private` 로 바꿉니다.
+- 표를 처음 만들 때는 `backend/sql/004` → `005` → `006` 을 순서대로 실행하고,
+  `cd backend && npm run import-json` 으로 `data/portfolio.json` 내용을 옮깁니다.
+  (이미 있는 행은 건너뛰므로 여러 번 실행해도 덮어쓰지 않습니다)
+- DB 에 문제가 생기면 `backend/.env` 의 `DATA_SOURCE=json` 으로 되돌릴 수 있습니다.
 
-함수의 이름이나 반환 모양이 약속과 다르면 서버가 켜질 때 바로 알려 줍니다.
-약속은 `backend/src/repositories/portfolioRepository.js` 에 적혀 있습니다.
+라우트와 화면 코드는 데이터가 어디서 오는지 모릅니다.
+저장소가 지켜야 할 약속은 `backend/src/repositories/portfolioRepository.js` 에 적혀 있습니다.
 
 ## 입력 칸을 늘리고 싶을 때
 

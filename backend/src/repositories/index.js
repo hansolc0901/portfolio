@@ -10,7 +10,7 @@ import { createDbRepository } from './dbRepository.js';
 
 const BUILDERS = {
   json: () => createJsonRepository({ dataFile: config.dataFile }),
-  db: () => createDbRepository({ databaseUrl: config.databaseUrl }),
+  db: () => createDbRepository(),
 };
 
 export function createRepository(source = config.dataSource) {
